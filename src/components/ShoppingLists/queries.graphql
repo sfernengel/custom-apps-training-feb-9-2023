@@ -1,0 +1,11 @@
+query fetchShoppingLists {
+  shoppingLists {
+    results {
+      id
+      nameAllLocales {
+        value
+        locale
+      }
+    }
+  }
+}
