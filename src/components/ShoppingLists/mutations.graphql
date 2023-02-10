@@ -3,3 +3,9 @@ mutation deleteShoppingList($version: Long!, $id: String) {
     id
   }
 }
+mutation createShoppingList($locale: Locale!, $name: String!) {
+  createShoppingList(draft: { name: { locale: $locale, value: $name } }) {
+    id
+    name(locale: "en")
+  }
+}

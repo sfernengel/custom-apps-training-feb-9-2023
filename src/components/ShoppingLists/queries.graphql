@@ -1,5 +1,5 @@
 query fetchShoppingLists {
-  shoppingLists {
+  shoppingLists(limit: 500) {
     results {
       id
       version
