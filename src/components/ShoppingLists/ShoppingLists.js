@@ -5,6 +5,26 @@ import { fetchShoppingLists } from "./queries.graphql";
 import { deleteShoppingList, createShoppingList } from "./mutations.graphql";
 import { useState } from "react";
 
+import DataTableManager from "@commercetools-uikit/data-table-manager";
+import DataTable from "@commercetools-uikit/data-table";
+
+//data
+//results[i].id
+
+const cols = [
+  {
+    key: "id",
+    label: "ID",
+    renderItem: (row) => (row.id ? row.id : ""),
+  },
+  {
+    key: "name",
+    label: "Name",
+    renderItem: (row) =>
+      row.nameAllLocales ? row.nameAllLocales[0].value : "",
+  },
+];
+
 const ShoppingLists = () => {
   const [shoppingListName, setShoppingListName] = useState("");
   const [shoppingListLocale, setShoppingListLocale] = useState("");
@@ -79,6 +99,18 @@ const ShoppingLists = () => {
     if (error) console.log(error.message);
   };
 
+  // Add Table
+
+  const rows = [
+    { id: "parasite", title: "Parasite", country: "South Korea" },
+    { id: "portrait", title: "Portrait of a Lady on Fire", country: "France" },
+    { id: "wat", title: "Woman at War", country: "Iceland" },
+  ];
+  const columns = [
+    { key: "title", label: "Title" },
+    { key: "country", label: "Country" },
+  ];
+
   if (loading) return "Loading ...";
   if (error) return `--Error ${error.message}`;
   console.log(data);
@@ -103,6 +135,10 @@ const ShoppingLists = () => {
       </form>
       <button onClick={handleDelete}>Delete</button>
       <button onClick={handleAdd}>Add</button>
+      <DataTableManager columns={cols}>
+        <DataTable rows={data?.shoppingLists?.results} />
+      </DataTableManager>
+      ;
     </div>
   );
 };
