@@ -8,6 +8,11 @@ import { useState } from "react";
 import DataTableManager from "@commercetools-uikit/data-table-manager";
 import DataTable from "@commercetools-uikit/data-table";
 
+import { useFormik } from "formik";
+import { FormModalPage } from "@commercetools-frontend/application-components";
+import PrimaryButton from "@commercetools-uikit/primary-button";
+import TextField from "@commercetools-uikit/text-field";
+
 //data
 //results[i].id
 
@@ -26,8 +31,21 @@ const cols = [
 ];
 
 const ShoppingLists = () => {
-  const [shoppingListName, setShoppingListName] = useState("");
-  const [shoppingListLocale, setShoppingListLocale] = useState("");
+  // Add formik
+
+  const [modalState, setModalState] = useState(false);
+
+  const formik = useFormik({
+    initialValues: {
+      locale: "",
+      name: "",
+    },
+    onSubmit: (values, { resetForm }) => {
+      handleAddShoppingList(values);
+      resetForm({});
+    },
+    validateOnChange: false,
+  });
 
   // fetch shoppinglists
   const { error, data, loading } = useQuery(fetchShoppingLists, {
@@ -74,29 +92,41 @@ const ShoppingLists = () => {
   //   if (error) console.log(error.message);
   // };
 
-  const handleAdd = async () => {
-    const { error } = await addShoppingList({
+  // const handleAdd = async () => {
+  //   const { error } = await addShoppingList({
+  //     variables: {
+  //       name: "My Shopping List 123",
+  //       locale: "en",
+  //     },
+  //     context: { target: GRAPHQL_TARGETS.COMMERCETOOLS_PLATFORM },
+  //   });
+
+  //   if (error) console.log(error.message);
+  // };
+
+  // const handleAddShoppingList = async (event) => {
+  //   event.preventDefault();
+  //   const { error } = await addShoppingList({
+  //     variables: {
+  //       name: shoppingListName,
+  //       locale: shoppingListLocale,
+  //     },
+  //     context: { target: GRAPHQL_TARGETS.COMMERCETOOLS_PLATFORM },
+  //   });
+
+  //   if (error) console.log(error.message);
+  // };
+
+  const handleAddShoppingList = async (formValues) => {
+    const { error, data } = await addShoppingList({
       variables: {
-        name: "My Shopping List 123",
-        locale: "en",
+        name: formValues.name,
+        locale: formValues.locale,
       },
       context: { target: GRAPHQL_TARGETS.COMMERCETOOLS_PLATFORM },
     });
-
     if (error) console.log(error.message);
-  };
-
-  const handleAddShoppingList = async (event) => {
-    event.preventDefault();
-    const { error } = await addShoppingList({
-      variables: {
-        name: shoppingListName,
-        locale: shoppingListLocale,
-      },
-      context: { target: GRAPHQL_TARGETS.COMMERCETOOLS_PLATFORM },
-    });
-
-    if (error) console.log(error.message);
+    console.log(data);
   };
 
   // Add Table
@@ -117,8 +147,38 @@ const ShoppingLists = () => {
 
   return (
     <div>
+      <FormModalPage
+        title="Manage your ShoppingList"
+        isOpen={modalState}
+        onClose={() => setModalState(false)}
+        isPrimaryButtonDisabled={formik.isSubmitting}
+        onSecondaryButtonClick={formik.handleReset}
+        onPrimaryButtonClick={formik.handleSubmit}
+      >
+        <form onSubmit={formik.handleSubmit}>
+          <TextField
+            name="name"
+            title="Name"
+            isRequired={true}
+            value={formik.values.name}
+            onChange={formik.handleChange}
+          />
+          <TextField
+            name="locale"
+            title="Locale"
+            isRequired={true}
+            value={formik.values.locale}
+            onChange={formik.handleChange}
+          />
+        </form>
+      </FormModalPage>
+      <PrimaryButton
+        label="Add a ShoppingList"
+        onClick={() => setModalState(true)}
+        isDisabled={false}
+      />
       ShoppingLists
-      <form>
+      {/* <form>
         <label>Locale: </label>
         <input
           type="text"
@@ -134,7 +194,7 @@ const ShoppingLists = () => {
         <button onClick={handleAddShoppingList}> add Shopping List</button>
       </form>
       <button onClick={handleDelete}>Delete</button>
-      <button onClick={handleAdd}>Add</button>
+      <button onClick={handleAdd}>Add</button> */}
       <DataTableManager columns={cols}>
         <DataTable rows={data?.shoppingLists?.results} />
       </DataTableManager>
