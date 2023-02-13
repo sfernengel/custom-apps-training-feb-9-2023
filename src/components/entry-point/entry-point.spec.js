@@ -1,4 +1,4 @@
-import { renderApplicationWithRedux } from '../../test-utils';
+import { renderApplicationWithRedux } from "../../test-utils";
 
 const render = (options) => {
   return renderApplicationWithRedux(null, {
@@ -9,28 +9,28 @@ const render = (options) => {
   });
 };
 
-describe('when route matches', () => {
-  it('should render view', async () => {
+describe("when route matches", () => {
+  it("should render view", async () => {
     const rendered = render({
-      route: '/my-project/training-custom-app',
+      route: "/my-project/sf-training-custom-app",
     });
     await rendered.findByText(/Page one/i);
   });
 });
 
-describe('when route does not match', () => {
-  it('should render catch all', async () => {
+describe("when route does not match", () => {
+  it("should render catch all", async () => {
     const rendered = render({
-      route: '/my-project/xyz',
+      route: "/my-project/xyz",
     });
     await rendered.findByText(/we could not find what you are looking for/i);
   });
 });
 
-describe('without permissions', () => {
-  it('should render `PageUnauthorized`', async () => {
+describe("without permissions", () => {
+  it("should render `PageUnauthorized`", async () => {
     const rendered = render({
-      route: '/my-project/training-custom-app',
+      route: "/my-project/sf-training-custom-app",
       permissions: {},
     });
     await rendered.findByText(
